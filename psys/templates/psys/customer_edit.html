@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>得意先変更</title>
+</head>
+<body>
+
+<h1>得意先変更</h1>
+
+<h2>得意先検索</h2>
+
+<form method="get">
+    <p>
+        得意先コード：
+        <input
+            type="text"
+            name="customer_code"
+            maxlength="6"
+            value="{{ customer_code }}"
+            required
+        >
+        <button type="submit">検索</button>
+    </p>
+</form>
+
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+
+{% if error_message %}
+    <p>{{ error_message }}</p>
+{% endif %}
+
+{% if customer and form %}
+    <hr>
+
+    <h2>得意先情報の変更</h2>
+
+    <p>得意先コード：{{ customer.customer_code }}</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="customer_code"
+            value="{{ customer.customer_code }}"
+        >
+
+        {{ form.as_p }}
+
+        <button type="submit">変更を保存</button>
+    </form>
+{% endif %}
+
+</body>
+</html>

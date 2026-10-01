@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>得意先検索</title>
+</head>
+<body>
+
+<h1>得意先検索</h1>
+
+<form method="get">
+    <label for="customer_code">得意先コード：</label>
+    <input
+        type="text"
+        id="customer_code"
+        name="customer_code"
+        maxlength="6"
+        required
+    >
+    <button type="submit">検索</button>
+</form>
+
+{% if error_message %}
+    <p>{{ error_message }}</p>
+{% endif %}
+
+{% if customer %}
+    <hr>
+
+    <p>得意先コード：{{ customer.customer_code }}</p>
+    <p>得意先名：{{ customer.customer_name }}</p>
+    <p>電話番号：{{ customer.customer_telno }}</p>
+    <p>郵便番号：{{ customer.customer_postalcode }}</p>
+    <p>住所：{{ customer.customer_address }}</p>
+    <p>割引率：{{ customer.discount_rate }}</p>
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>得意先登録</title>
+</head>
+<body>
+
+<h1>得意先登録</h1>
+
+{% if message %}
+    <p>{{ message }}</p>
+{% endif %}
+
+{% if error_message %}
+    <p>{{ error_message }}</p>
+{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+
+    <p>
+        得意先名：
+        <input type="text" name="customer_name" maxlength="32" required>
+    </p>
+
+    <p>
+        電話番号：
+        <input type="text" name="customer_telno" maxlength="13">
+    </p>
+
+    <p>
+        郵便番号：
+        <input type="text" name="customer_postalcode" maxlength="8">
+    </p>
+
+    <p>
+        住所：
+        <input type="text" name="customer_address" maxlength="40">
+    </p>
+
+    <p>
+        割引率：
+        <input type="number" name="discount_rate" min="0" max="99" value="0">
+    </p>
+
+    <button type="submit">登録</button>
+</form>
+
+</body>
+</html>

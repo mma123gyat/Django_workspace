@@ -147,3 +147,13 @@ def customer_edit(request):
         'error_message': error_message,
         'customer_code': customer_code,
     })
+
+
+def customer_list(request):
+    customers = Customer.objects.filter(
+        delete_flag=0
+    ).order_by('customer_code')
+
+    return render(request, 'psys/customer_list.html', {
+        'customers': customers
+    })

@@ -1,47 +1,46 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>得意先一覧</title>
 </head>
+
 <body>
 
-<h1>得意先一覧</h1>
+    {% include 'psys/_menu.html' %}
 
-<table border="1">
-    <tr>
-        <th>得意先コード</th>
-        <th>得意先名</th>
-        <th>電話番号</th>
-        <th>郵便番号</th>
-        <th>住所</th>
-        <th>割引率</th>
-    </tr>
+    <main class="psys-page-content">
 
-    {% for customer in customers %}
-    <tr>
-        <td>{{ customer.customer_code }}</td>
-        <td>{{ customer.customer_name }}</td>
-        <td>{{ customer.customer_telno }}</td>
-        <td>{{ customer.customer_postalcode }}</td>
-        <td>{{ customer.customer_address }}</td>
-        <td>{{ customer.discount_rate }}%</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="6">得意先が登録されていません。</td>
-    </tr>
-    {% endfor %}
-</table>
+        <h1>得意先一覧</h1>
 
-<p>
-    ログイン中：{{ request.session.employee_name }}
-</p>
+        <table border="1">
+            <tr>
+                <th>得意先コード</th>
+                <th>得意先名</th>
+                <th>電話番号</th>
+                <th>郵便番号</th>
+                <th>住所</th>
+                <th>割引率</th>
+            </tr>
 
-<form method="post" action="{% url 'employee_logout' %}">
-    {% csrf_token %}
-    <button type="submit">ログアウト</button>
-</form>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.customer_code }}</td>
+                <td>{{ customer.customer_name }}</td>
+                <td>{{ customer.customer_telno }}</td>
+                <td>{{ customer.customer_postalcode }}</td>
+                <td>{{ customer.customer_address }}</td>
+                <td>{{ customer.discount_rate }}%</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">得意先が登録されていません。</td>
+            </tr>
+            {% endfor %}
+        </table>
 
+    </main>
 </body>
+
 </html>

@@ -1,0 +1,318 @@
+<style>
+    body {
+        font-family: "Meiryo", sans-serif;
+        background: #f3f6fa;
+        color: #333;
+        margin: 0;
+    }
+
+    .psys-navigation {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    .psys-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .psys-title {
+        color: #1e40af;
+        margin: 0 0 10px;
+    }
+
+    .psys-user {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .psys-navigation h2 {
+        margin-top: 35px;
+        border-left: 5px solid #2563eb;
+        padding-left: 10px;
+    }
+
+    .psys-menu {
+        display: grid;
+        grid-template-columns:
+            repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .psys-menu-button {
+        display: block;
+        padding: 20px 15px;
+        background: white;
+        color: #2563eb;
+        text-decoration: none;
+        text-align: center;
+        font-weight: bold;
+        border: 1px solid #dbe3ee;
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+
+    .psys-menu-button:hover {
+        background: #2563eb;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .psys-menu-button.active {
+        background: #dbeafe;
+        border-color: #2563eb;
+    }
+
+    .psys-logout {
+        background: #dc2626;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 10px 18px;
+        cursor: pointer;
+    }
+
+    .psys-logout:hover {
+        background: #b91c1c;
+    }
+
+    .psys-page-content {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px 40px;
+    }
+
+
+    /* ==================================
+   共通フォームデザイン
+================================== */
+
+    .psys-page-content {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 20px 50px;
+    }
+
+    .psys-page-content>h1 {
+        color: #1e40af;
+        font-size: 26px;
+        margin-bottom: 25px;
+    }
+
+    /* フォーム全体を白いカードにする */
+    .psys-page-content form {
+        background: #ffffff;
+        width: 100%;
+        max-width: 650px;
+        padding: 30px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        margin: 20px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    /* 登録・変更画面の各入力項目 */
+    .psys-page-content form p {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin: 0 0 8px;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* ラベル */
+    .psys-page-content form label {
+        display: block;
+        color: #334155;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* 入力欄 */
+    .psys-page-content form input:not([type="hidden"]):not([type="checkbox"]):not([type="radio"]),
+    .psys-page-content form select,
+    .psys-page-content form textarea {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        padding: 13px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #334155;
+        font-size: 15px;
+        font-family: inherit;
+        font-weight: normal;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    /* フォーカス時に青い枠を表示 */
+    .psys-page-content form input:focus,
+    .psys-page-content form select:focus,
+    .psys-page-content form textarea:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    /* 入力例の文字色 */
+    .psys-page-content form input::placeholder {
+        color: #94a3b8;
+    }
+
+    /* 検索・登録・変更ボタン */
+    .psys-page-content form button[type="submit"] {
+        padding: 13px 24px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: bold;
+        font-family: inherit;
+        cursor: pointer;
+        transition: 0.2s;
+        align-self: flex-start;
+    }
+
+    /* ボタンのホバー */
+    .psys-page-content form button[type="submit"]:hover {
+        background: #1d4ed8;
+        transform: translateY(-2px);
+    }
+
+    /* 削除ボタン */
+    .psys-page-content form button.danger-button {
+        background: #dc2626;
+    }
+
+    .psys-page-content form button.danger-button:hover {
+        background: #b91c1c;
+    }
+
+    /* 結果表示用カード */
+    .psys-result-card {
+        background: white;
+        max-width: 650px;
+        padding: 25px 30px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    .psys-result-card p {
+        padding: 8px 0;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* メッセージ表示 */
+    .psys-success {
+        padding: 14px;
+        border-radius: 8px;
+        background: #f0fdf4;
+        color: #166534;
+        max-width: 650px;
+    }
+
+    .psys-error {
+        padding: 14px;
+        border-radius: 8px;
+        background: #fef2f2;
+        color: #dc2626;
+        max-width: 650px;
+    }
+
+    /* スマホ対応 */
+    @media (max-width: 600px) {
+        .psys-page-content form {
+            padding: 20px;
+        }
+
+        .psys-page-content form button[type="submit"] {
+            width: 100%;
+        }
+    }
+</style>
+
+
+
+<nav class="psys-navigation">
+
+    <div class="psys-header">
+        <div>
+            <h1 class="psys-title">
+                販売支援システム
+            </h1>
+            <p class="psys-user">
+                ログイン中：
+                {{ request.session.employee_name }}
+            </p>
+        </div>
+
+        <form method="post" action="{% url 'employee_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="psys-logout">
+                ログアウト
+            </button>
+        </form>
+    </div>
+
+    <h2>得意先管理</h2>
+
+    <div class="psys-menu">
+        <a href="{% url 'customer_search' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'customer_search' %} active{% endif %}">
+            得意先検索
+        </a>
+
+        <a href="{% url 'customer_register' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'customer_register' %} active{% endif %}">
+            得意先登録
+        </a>
+
+        <a href="{% url 'customer_delete' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'customer_delete' %} active{% endif %}">
+            得意先削除
+        </a>
+
+        <a href="{% url 'customer_edit' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'customer_edit' %} active{% endif %}">
+            得意先変更
+        </a>
+
+        <a href="{% url 'customer_list' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'customer_list' %} active{% endif %}">
+            得意先一覧
+        </a>
+    </div>
+
+    <h2>受注集計</h2>
+
+    <div class="psys-menu">
+        <a href="{% url 'monthly_order_summary' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'monthly_order_summary' %} active{% endif %}">
+            月別受注集計
+        </a>
+
+        <a href="{% url 'yearly_order_summary' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'yearly_order_summary' %} active{% endif %}">
+            年次受注集計
+        </a>
+
+        <a href="{% url 'product_order_summary' %}"
+            class="psys-menu-button{% if request.resolver_match.url_name == 'product_order_summary' %} active{% endif %}">
+            商品別受注集計
+        </a>
+    </div>
+
+</nav>

@@ -1,67 +1,55 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>得意先変更</title>
 </head>
+
 <body>
 
-<h1>得意先変更</h1>
+    {% include 'psys/_menu.html' %}
 
-<h2>得意先検索</h2>
+    <main class="psys-page-content">
+        <h1>得意先変更</h1>
 
-<form method="get">
-    <p>
-        得意先コード：
-        <input
-            type="text"
-            name="customer_code"
-            maxlength="6"
-            value="{{ customer_code }}"
-            required
-        >
-        <button type="submit">検索</button>
-    </p>
-</form>
+        <h2>得意先検索</h2>
 
-{% if message %}
-    <p>{{ message }}</p>
-{% endif %}
+        <form method="get">
+            <p>
+                得意先コード：
+                <input type="text" name="customer_code" maxlength="6" value="{{ customer_code }}" required>
+                <button type="submit">検索</button>
+            </p>
+        </form>
 
-{% if error_message %}
-    <p>{{ error_message }}</p>
-{% endif %}
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
 
-{% if customer and form %}
-    <hr>
+        {% if error_message %}
+        <p>{{ error_message }}</p>
+        {% endif %}
 
-    <h2>得意先情報の変更</h2>
+        {% if customer and form %}
+        <hr>
 
-    <p>得意先コード：{{ customer.customer_code }}</p>
+        <h2>得意先情報の変更</h2>
 
-    <form method="post">
-        {% csrf_token %}
+        <p>得意先コード：{{ customer.customer_code }}</p>
 
-        <input
-            type="hidden"
-            name="customer_code"
-            value="{{ customer.customer_code }}"
-        >
+        <form method="post">
+            {% csrf_token %}
 
-        {{ form.as_p }}
+            <input type="hidden" name="customer_code" value="{{ customer.customer_code }}">
 
-        <button type="submit">変更を保存</button>
-    </form>
-{% endif %}
+            {{ form.as_p }}
 
-<p>
-    ログイン中：{{ request.session.employee_name }}
-</p>
+            <button type="submit">変更を保存</button>
+        </form>
+        {% endif %}
 
-<form method="post" action="{% url 'employee_logout' %}">
-    {% csrf_token %}
-    <button type="submit">ログアウト</button>
-</form>
-
+    </main>
 </body>
+
 </html>

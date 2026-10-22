@@ -1,72 +1,69 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>月別受注集計</title>
 </head>
+
 <body>
 
-<h1>月別受注集計</h1>
+    {% include 'psys/_menu.html' %}
 
-<form method="get">
-    <label>
-        <input type="number" name="year"
-               value="{{ year }}" min="1900" max="2100" required>
-        年：
-    </label>
+    <main class="psys-page-content">
 
-    <label>
-        <input type="number" name="month"
-               value="{{ month }}" min="1" max="12" required>
-        月：
-    </label>
+        <h1>月別受注集計</h1>
 
-    <button type="submit">集計</button>
-</form>
+        <form method="get">
+            <label>
+                <input type="number" name="year" value="{{ year }}" min="1900" max="2100" required>
+                年：
+            </label>
 
-{% if error_message %}
-    <p>{{ error_message }}</p>
-{% endif %}
+            <label>
+                <input type="number" name="month" value="{{ month }}" min="1" max="12" required>
+                月：
+            </label>
 
-{% if year and month and not error_message %}
+            <button type="submit">集計</button>
+        </form>
 
-<h2>{{ year }}年{{ month }}月の受注集計</h2>
+        {% if error_message %}
+        <p>{{ error_message }}</p>
+        {% endif %}
 
-<table border="1">
-    <tr>
-        <th>得意先コード</th>
-        <th>得意先名</th>
-        <th>合計金額</th>
-    </tr>
+        {% if year and month and not error_message %}
 
-    {% for item in summaries %}
-    <tr>
-        <td>{{ item.customer_code }}</td>
-        <td>{{ item.customer_code__customer_name }}</td>
-        <td>{{ item.total_sales }} 円</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="3">該当する受注がありません。</td>
-    </tr>
-    {% endfor %}
+        <h2>{{ year }}年{{ month }}月の受注集計</h2>
 
-    <tr>
-        <th colspan="2">総計</th>
-        <th>{{ grand_total }} 円</th>
-    </tr>
-</table>
+        <table border="1">
+            <tr>
+                <th>得意先コード</th>
+                <th>得意先名</th>
+                <th>合計金額</th>
+            </tr>
 
-{% endif %}
+            {% for item in summaries %}
+            <tr>
+                <td>{{ item.customer_code }}</td>
+                <td>{{ item.customer_code__customer_name }}</td>
+                <td>{{ item.total_sales }} 円</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">該当する受注がありません。</td>
+            </tr>
+            {% endfor %}
 
-<p>
-    ログイン中：{{ request.session.employee_name }}
-</p>
+            <tr>
+                <th colspan="2">総計</th>
+                <th>{{ grand_total }} 円</th>
+            </tr>
+        </table>
 
-<form method="post" action="{% url 'employee_logout' %}">
-    {% csrf_token %}
-    <button type="submit">ログアウト</button>
-</form>
+        {% endif %}
 
+    </main>
 </body>
+
 </html>

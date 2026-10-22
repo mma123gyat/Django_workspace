@@ -1,67 +1,63 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>年次受注集計</title>
 </head>
+
 <body>
+    {% include 'psys/_menu.html' %}
 
-<h1>年次受注集計</h1>
+    <main class="psys-page-content">
+        <h1>年次受注集計</h1>
 
-<form method="get">
-    <label>
-        <input type="number" name="year"
-               value="{{ year }}"
-               min="1900" max="2100" required>
-        年：
-    </label>
+        <form method="get">
+            <label>
+                <input type="number" name="year" value="{{ year }}" min="1900" max="2100" required>
+                年：
+            </label>
 
-    <button type="submit">集計</button>
-</form>
+            <button type="submit">集計</button>
+        </form>
 
-{% if error_message %}
-    <p>{{ error_message }}</p>
-{% endif %}
+        {% if error_message %}
+        <p>{{ error_message }}</p>
+        {% endif %}
 
-{% if year and not error_message %}
+        {% if year and not error_message %}
 
-<h2>{{ year }}年の受注集計</h2>
+        <h2>{{ year }}年の受注集計</h2>
 
-<table border="1">
-    <tr>
-        <th>得意先コード</th>
-        <th>得意先名</th>
-        <th>合計金額</th>
-    </tr>
+        <table border="1">
+            <tr>
+                <th>得意先コード</th>
+                <th>得意先名</th>
+                <th>合計金額</th>
+            </tr>
 
-    {% for item in summaries %}
-    <tr>
-        <td>{{ item.customer_code }}</td>
-        <td>{{ item.customer_code__customer_name }}</td>
-        <td>{{ item.total_sales }} 円</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="3">該当する受注がありません。</td>
-    </tr>
-    {% endfor %}
+            {% for item in summaries %}
+            <tr>
+                <td>{{ item.customer_code }}</td>
+                <td>{{ item.customer_code__customer_name }}</td>
+                <td>{{ item.total_sales }} 円</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">該当する受注がありません。</td>
+            </tr>
+            {% endfor %}
 
-    <tr>
-        <th colspan="2">総計</th>
-        <th>{{ grand_total }} 円</th>
-    </tr>
-</table>
+            <tr>
+                <th colspan="2">総計</th>
+                <th>{{ grand_total }} 円</th>
+            </tr>
+        </table>
 
-{% endif %}
+        {% endif %}
 
-<p>
-    ログイン中：{{ request.session.employee_name }}
-</p>
-
-<form method="post" action="{% url 'employee_logout' %}">
-    {% csrf_token %}
-    <button type="submit">ログアウト</button>
-</form>
+    </main>
 
 </body>
+
 </html>

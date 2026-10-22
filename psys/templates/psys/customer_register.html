@@ -1,60 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <title>得意先登録</title>
 </head>
+
 <body>
 
-<h1>得意先登録</h1>
+    {% include 'psys/_menu.html' %}
 
-{% if message %}
-    <p>{{ message }}</p>
-{% endif %}
+    <main class="psys-page-content">
+        <h1>得意先登録</h1>
 
-{% if error_message %}
-    <p>{{ error_message }}</p>
-{% endif %}
+        {% if message %}
+        <p>{{ message }}</p>
+        {% endif %}
 
-<form method="post">
-    {% csrf_token %}
+        {% if error_message %}
+        <p>{{ error_message }}</p>
+        {% endif %}
 
-    <p>
-        得意先名：
-        <input type="text" name="customer_name" maxlength="32" required>
-    </p>
+        <form method="post">
+            {% csrf_token %}
 
-    <p>
-        電話番号：
-        <input type="text" name="customer_telno" maxlength="13">
-    </p>
+            <p>
+                <label for="customer_name">得意先名</label>
+                <input type="text" id="customer_name" name="customer_name" placeholder="得意先名を入力" maxlength="32"
+                    required>
+            </p>
 
-    <p>
-        郵便番号：
-        <input type="text" name="customer_postalcode" maxlength="8">
-    </p>
+            <p>
+                <label for="customer_telno">電話番号</label>
+                <input type="text" id="customer_telno" name="customer_telno" placeholder="例：090-1234-5678"
+                    maxlength="13">
+            </p>
+            
+            <p>
+                郵便番号：
+                <input type="text"id="customer_postalcode" name="customer_postalcode" placeholder="例：000-0000" maxlength="7">
+            </p>
 
-    <p>
-        住所：
-        <input type="text" name="customer_address" maxlength="40">
-    </p>
+            <p>
+                住所：
+                <input type="text"id="customer_address" name="customer_address">
+            </p>
 
-    <p>
-        割引率：
-        <input type="number" name="discount_rate" min="0" max="99" value="0">
-    </p>
+            <p>
+                割引率：
+                <input type="number" name="discount_rate" min="0" max="99" value="0">
+            </p>
 
-    <button type="submit">登録</button>
-</form>
-
-<p>
-    ログイン中：{{ request.session.employee_name }}
-</p>
-
-<form method="post" action="{% url 'employee_logout' %}">
-    {% csrf_token %}
-    <button type="submit">ログアウト</button>
-</form>
-
+            <button type="submit">登録</button>
+        </form>
+    </main>
 </body>
+
 </html>

@@ -6,7 +6,10 @@ def customer_search(request):
     customer = None
     error_message = None
 
-    customer_code = request.GET.get('customer_code')
+    customer = Customer.objects.get(
+    customer_code=customer_code,
+    delete_flag=0
+)
 
     if customer_code:
         try:

@@ -35,5 +35,14 @@
     <p>割引率：{{ customer.discount_rate }}</p>
 {% endif %}
 
+<p>
+    ログイン中：{{ request.session.employee_name }}
+</p>
+
+<form method="post" action="{% url 'employee_logout' %}">
+    {% csrf_token %}
+    <button type="submit">ログアウト</button>
+</form>
+
 </body>
 </html>

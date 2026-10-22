@@ -54,5 +54,14 @@
     </form>
 {% endif %}
 
+<p>
+    ログイン中：{{ request.session.employee_name }}
+</p>
+
+<form method="post" action="{% url 'employee_logout' %}">
+    {% csrf_token %}
+    <button type="submit">ログアウト</button>
+</form>
+
 </body>
 </html>

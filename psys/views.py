@@ -6,14 +6,14 @@ def customer_search(request):
     customer = None
     error_message = None
 
-    customer = Customer.objects.get(
-    customer_code=customer_code,
-    delete_flag=0
-)
+    customer_code = request.GET.get('customer_code')
 
     if customer_code:
         try:
-            customer = Customer.objects.get(customer_code=customer_code)
+            customer = Customer.objects.get(
+                customer_code=customer_code,
+                delete_flag=0
+            )
         except Customer.DoesNotExist:
             error_message = '該当する得意先が見つかりません。'
 
@@ -168,20 +168,44 @@ from .models import Orders
 
 
 def monthly_order_summary(request):
-    summaries = (
-        Orders.objects
-        .filter(order_date__isnull=False)
-        .annotate(month=TruncMonth('order_date'))
-        .values('month')
-        .annotate(
-            order_count=Count('order_no'),
-            total_sales=Sum('total_price', default=0)
-        )
-        .order_by('month')
-    )
+    year = request.GET.get('year', '').strip()
+    month = request.GET.get('month', '').strip()
+
+    summaries = []
+    grand_total = 0
+    error_message = None
+
+    if year or month:
+        if not (
+            year.isdigit()
+            and month.isdigit()
+            and 1900 <= int(year) <= 2100
+            and 1 <= int(month) <= 12
+        ):
+            error_message = '正しい年と月を入力してください。'
+        else:
+            orders = Orders.objects.filter(
+                order_date__year=int(year),
+                order_date__month=int(month)
+            )
+
+            summaries = orders.values(
+                'customer_code',
+                'customer_code__customer_name'
+            ).annotate(
+                total_sales=Sum('total_price', default=0)
+            ).order_by('customer_code')
+
+            grand_total = orders.aggregate(
+                total=Sum('total_price', default=0)
+            )['total']
 
     return render(request, 'psys/monthly_order_summary.html', {
-        'summaries': summaries
+        'year': year,
+        'month': month,
+        'summaries': summaries,
+        'grand_total': grand_total,
+        'error_message': error_message,
     })
 
 
@@ -189,20 +213,36 @@ from django.db.models.functions import TruncYear
 
 
 def yearly_order_summary(request):
-    summaries = (
-        Orders.objects
-        .filter(order_date__isnull=False)
-        .annotate(year=TruncYear('order_date'))
-        .values('year')
-        .annotate(
-            order_count=Count('order_no'),
-            total_sales=Sum('total_price', default=0)
-        )
-        .order_by('year')
-    )
+    year = request.GET.get('year', '').strip()
+
+    summaries = []
+    grand_total = 0
+    error_message = None
+
+    if year:
+        if not year.isdigit() or not (1900 <= int(year) <= 2100):
+            error_message = '正しい年を入力してください。'
+        else:
+            orders = Orders.objects.filter(
+                order_date__year=int(year)
+            )
+
+            summaries = orders.values(
+                'customer_code',
+                'customer_code__customer_name'
+            ).annotate(
+                total_sales=Sum('total_price', default=0)
+            ).order_by('customer_code')
+
+            grand_total = orders.aggregate(
+                total=Sum('total_price', default=0)
+            )['total']
 
     return render(request, 'psys/yearly_order_summary.html', {
-        'summaries': summaries
+        'year': year,
+        'summaries': summaries,
+        'grand_total': grand_total,
+        'error_message': error_message,
     })
 
 
@@ -210,17 +250,107 @@ from .models import OrderDetails
 
 
 def product_order_summary(request):
-    summaries = (
-        OrderDetails.objects
-        .values('item_code', 'item_code__item_name')
-        .annotate(
-            order_count=Count('order_no', distinct=True),
-            total_quantity=Sum('order_num', default=0),
-            total_sales=Sum('order_price', default=0)
-        )
-        .order_by('item_code')
-    )
+    customer_code = request.GET.get('customer_code', '').strip()
+
+    customer = None
+    summaries = []
+    grand_total = 0
+    error_message = None
+
+    if customer_code:
+        customer = Customer.objects.filter(
+            customer_code=customer_code
+        ).first()
+
+        if customer is None:
+            error_message = '該当する得意先が見つかりません。'
+        else:
+            details = OrderDetails.objects.filter(
+                order_no__customer_code=customer
+            )
+
+            summaries = (
+                details
+                .values(
+                    'item_code',
+                    'item_code__item_name',
+                    'item_code__price'
+                )
+                .annotate(
+                    total_quantity=Sum('order_num', default=0),
+                    total_sales=Sum('order_price', default=0)
+                )
+                .order_by('item_code')
+            )
+
+            grand_total = details.aggregate(
+                total=Sum('order_price', default=0)
+            )['total']
 
     return render(request, 'psys/product_order_summary.html', {
-        'summaries': summaries
+        'customer_code': customer_code,
+        'customer': customer,
+        'summaries': summaries,
+        'grand_total': grand_total,
+        'error_message': error_message,
     })
+
+
+
+from functools import wraps
+from hmac import compare_digest
+
+from django.shortcuts import redirect
+from django.views.decorators.http import require_POST
+from .models import Employee
+
+
+def employee_login(request):
+    if request.session.get('employee_no'):
+        return redirect('customer_list')
+
+    error_message = None
+
+    if request.method == 'POST':
+        employee_no = request.POST.get('employee_no', '').strip()
+        password = request.POST.get('password', '')
+
+        employee = Employee.objects.filter(
+            employee_no=employee_no
+        ).first()
+
+        if (
+            employee is not None
+            and password
+            and compare_digest(
+                (employee.password or '').encode('utf-8'),
+                password.encode('utf-8')
+            )
+        ):
+            request.session.cycle_key()
+            request.session['employee_no'] = employee.employee_no
+            request.session['employee_name'] = employee.employee_name
+
+            return redirect('customer_list')
+
+        error_message = '従業員番号またはパスワードが違います。'
+
+    return render(request, 'psys/login.html', {
+        'error_message': error_message,
+    })
+
+
+@require_POST
+def employee_logout(request):
+    request.session.flush()
+    return redirect('employee_login')
+
+
+def employee_login_required(view_func):
+    @wraps(view_func)
+    def wrapped(request, *args, **kwargs):
+        if not request.session.get('employee_no'):
+            return redirect('employee_login')
+        return view_func(request, *args, **kwargs)
+
+    return wrapped

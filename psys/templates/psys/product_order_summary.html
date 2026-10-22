@@ -8,29 +8,71 @@
 
 <h1>商品別受注集計</h1>
 
-<table border="1">
-    <tr>
-        <th>商品コード</th>
-        <th>商品名</th>
-        <th>受注件数</th>
-        <th>販売数量</th>
-        <th>売上合計</th>
-    </tr>
+<form method="get">
+    <label>
+        得意先コード：
+        <input
+            type="text"
+            name="customer_code"
+            value="{{ customer_code }}"
+            maxlength="6"
+            required
+        >
+    </label>
 
-    {% for item in summaries %}
-    <tr>
-        <td>{{ item.item_code }}</td>
-        <td>{{ item.item_code__item_name }}</td>
-        <td>{{ item.order_count }} 件</td>
-        <td>{{ item.total_quantity }} 個</td>
-        <td>{{ item.total_sales }} 円</td>
-    </tr>
-    {% empty %}
-    <tr>
-        <td colspan="5">受注明細データがありません。</td>
-    </tr>
-    {% endfor %}
-</table>
+    <button type="submit">集計</button>
+</form>
+
+{% if error_message %}
+    <p>{{ error_message }}</p>
+{% endif %}
+
+{% if customer %}
+    <h2>
+        {{ customer.customer_code }}：
+        {{ customer.customer_name }}
+    </h2>
+
+    <table border="1">
+        <tr>
+            <th>商品コード</th>
+            <th>商品名</th>
+            <th>合計数量</th>
+            <th>単価</th>
+            <th>商品別合計金額</th>
+        </tr>
+
+        {% for item in summaries %}
+        <tr>
+            <td>{{ item.item_code }}</td>
+            <td>{{ item.item_code__item_name }}</td>
+            <td>{{ item.total_quantity }} 個</td>
+            <td>{{ item.item_code__price }} 円</td>
+            <td>{{ item.total_sales }} 円</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">
+                該当する受注データがありません。
+            </td>
+        </tr>
+        {% endfor %}
+
+        <tr>
+            <th colspan="4">総計</th>
+            <th>{{ grand_total }} 円</th>
+        </tr>
+    </table>
+{% endif %}
+
+<p>
+    ログイン中：{{ request.session.employee_name }}
+</p>
+
+<form method="post" action="{% url 'employee_logout' %}">
+    {% csrf_token %}
+    <button type="submit">ログアウト</button>
+</form>
 
 </body>
 </html>

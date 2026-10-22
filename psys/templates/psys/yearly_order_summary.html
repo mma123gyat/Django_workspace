@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年別受注集計</title>
+</head>
+<body>
+    <h1>年別受注集計</h1>
+
+    <table border="1">
+        <tr>
+            <th>年</th>
+            <th>受注件数</th>
+            <th>売上合計</th>
+        </tr>
+
+        {% for item in summaries %}
+        <tr>
+            <td>{{ item.year|date:"Y年" }}</td>
+            <td>{{ item.order_count }}</td>
+            <td>{{ item.total_sales }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="3">受注データがありません</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

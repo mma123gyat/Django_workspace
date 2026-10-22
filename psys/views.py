@@ -157,3 +157,67 @@ def customer_list(request):
     return render(request, 'psys/customer_list.html', {
         'customers': customers
     })
+
+
+from django.db.models import Count, Sum
+from django.db.models.functions import TruncMonth
+from .models import Orders
+
+
+def monthly_order_summary(request):
+    summaries = (
+        Orders.objects
+        .filter(order_date__isnull=False)
+        .annotate(month=TruncMonth('order_date'))
+        .values('month')
+        .annotate(
+            order_count=Count('order_no'),
+            total_sales=Sum('total_price', default=0)
+        )
+        .order_by('month')
+    )
+
+    return render(request, 'psys/monthly_order_summary.html', {
+        'summaries': summaries
+    })
+
+
+from django.db.models.functions import TruncYear
+
+
+def yearly_order_summary(request):
+    summaries = (
+        Orders.objects
+        .filter(order_date__isnull=False)
+        .annotate(year=TruncYear('order_date'))
+        .values('year')
+        .annotate(
+            order_count=Count('order_no'),
+            total_sales=Sum('total_price', default=0)
+        )
+        .order_by('year')
+    )
+
+    return render(request, 'psys/yearly_order_summary.html', {
+        'summaries': summaries
+    })
+
+
+from .models import OrderDetails
+
+
+def product_order_summary(request):
+    summaries = (
+        OrderDetails.objects
+        .values('item_code', 'item_code__item_name')
+        .annotate(
+            order_count=Count('order_no', distinct=True),
+            total_quantity=Sum('order_num', default=0),
+            total_sales=Sum('order_price', default=0)
+        )
+        .order_by('item_code')
+    )
+
+    return render(request, 'psys/product_order_summary.html', {
+        'summaries': summaries
+    })
